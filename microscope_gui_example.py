@@ -147,6 +147,7 @@ class GuiFocusPiezo:
 class GuiAcquisition:
     def __init__(self, master):
         self.frame = tk.LabelFrame(master, text='ACQUISITION', bd=6)
+        self.frame.bind('<Enter>', self.get_tkfocus)
         self.frame.grid(
             row=0, column=4, rowspan=2, padx=20, pady=20, sticky='n')
         self.spinbox_width = 20
@@ -186,6 +187,9 @@ class GuiAcquisition:
         # get scope ready:
         self.loop_snoutfocus()
         print('calling: self.scope.acquire()')
+
+    def get_tkfocus(self, event):   # event is not used here (.bind)
+        self.frame.focus_set()      # take from other widgets to force update
 
     def loop_snoutfocus(self):
         print('calling: self.scope.snoutfocus()')
