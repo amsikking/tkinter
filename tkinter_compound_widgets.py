@@ -1,5 +1,7 @@
+import os
 import tkinter as tk
 from tkinter import font
+from tkinter import filedialog
 
 class Textbox(tk.LabelFrame):
     def __init__(self,
@@ -85,7 +87,7 @@ class RadioButtons(tk.LabelFrame):
         self.position = self.tk_position.get()
 
     def init_radiobuttons(self):
-        self.tk_position=tk.IntVar()
+        self.tk_position = tk.IntVar()
         self.tk_position.set(self.default_position)
         for button in self.buttons:
             self.radiobutton = tk.Radiobutton(
@@ -313,66 +315,132 @@ if __name__=='__main__':
 ##    print(font.nametofont('TkDefaultFont').actual())
     size = 10 # default = 9
     font.nametofont("TkDefaultFont").configure(size=size)
-    font.nametofont("TkTextFont").configure(size=size)
     font.nametofont("TkFixedFont").configure(size=size)
+    font.nametofont("TkTextFont").configure(size=size)
+
+    # Buttons:
+    buttons_frame = tk.LabelFrame(root, text='BOUNDING FRAME', bd=6)
+    buttons_frame.grid(row=0, column=0, padx=pad, pady=pad)
+    button_width, button_height = 20, 2
+
+    def print_hello():
+        print('hello')
+        return None
+
+    def get_folder_path():
+        folder_path = tk.filedialog.askdirectory(
+            parent=buttons_frame,
+            initialdir=os.getcwd(),
+            title='Please choose a folder')
+        print('folder_path = %s'%folder_path)
+        return None
+
+    def get_file_path():
+        file_path = tk.filedialog.askopenfilename(
+            parent=buttons_frame,
+            initialdir=os.getcwd(),
+            title='Please choose a file')
+        print('file path = %s'%file_path)
+        return None
     
+    hello_button = tk.Button(
+        buttons_frame,
+        text="Print 'hello!'",
+        command=print_hello,
+        width=button_width,
+        height=button_height)
+    hello_button.grid(row=0, column=0, padx=10, pady=10)
+
+    get_folder_button = tk.Button(
+        buttons_frame,
+        text="Choose folder",
+        command=get_folder_path,
+        width=button_width,
+        height=button_height)
+    get_folder_button.grid(row=1, column=0, padx=10, pady=10)
+
+    get_file_button = tk.Button(
+        buttons_frame,
+        text="Choose file",
+        command=get_file_path,
+        width=button_width,
+        height=button_height)
+    get_file_button.grid(row=2, column=0, padx=10, pady=10)
+
+    # OptionMenu:
+    menu_frame = tk.LabelFrame(root, text='BOUNDING FRAME', bd=6)
+    menu_frame.grid(row=0, column=1, padx=pad, pady=pad)
+    menu_inner_frame = tk.LabelFrame(menu_frame, text='frame label')
+    menu_inner_frame.grid(row=0, column=0, padx=pad, pady=pad)
+    def print_option(option):
+        print('Option menu selection: %s'%option)
+        return None
+    options = ('option: A', 'option: B', 'option: C')
+    current_choice = tk.StringVar()
+    current_choice.set(options[1])
+    option_menu = tk.OptionMenu(
+        menu_inner_frame, current_choice, *options, command=print_option)
+    option_menu.config(width=20, height=2)
+    option_menu.grid(row=0, column=0, padx=10, pady=10)
+
     # Textbox:
-    frame_textbox = tk.LabelFrame(
-        root, text='Textbox bounding frame', bd=6)
-    frame_textbox0 = Textbox(frame_textbox, verbose=True)
-    frame_textbox1 = Textbox(frame_textbox,
-                             label='hello!',
-                             row=1,
-                             color='blue',
-                             default_text='testing',
-                             verbose=True)
-    frame_textbox.grid(row=0, column=0, padx=pad, pady=pad)
+    text_frame = tk.LabelFrame(root, text='BOUNDING FRAME', bd=6)
+    text_frame.grid(row=0, column=2, padx=pad, pady=pad)
+    textbox0 = Textbox(text_frame, verbose=True)
+    textbox1 = Textbox(
+        text_frame,
+        label='hello!',
+        row=1,
+        color='blue',
+        default_text='testing',
+        verbose=True)
     
     # Radiobuttons:
-    frame_radiobuttons = tk.LabelFrame(
-        root, text='RadioButtons bounding frame', bd=6)
-    frame_radiobuttons0 = RadioButtons(frame_radiobuttons, verbose=True)
-    frame_radiobuttons.grid(row=1, column=0, padx=pad, pady=pad)
+    radio_frame = tk.LabelFrame(root, text='BOUNDING FRAME', bd=6)
+    radio_frame.grid(row=0, column=3, padx=pad, pady=pad)
+    radiobuttons = RadioButtons(radio_frame, verbose=True)
     
     # CheckboxSliderSpinbox:
-    frame_checkboxsliderspinbox = tk.LabelFrame(
-        root, text='CheckboxSliderSpinbox bounding frame', bd=6)
-    frame0 = CheckboxSliderSpinbox(frame_checkboxsliderspinbox, verbose=True)
-    frame1 = CheckboxSliderSpinbox(frame_checkboxsliderspinbox,
-                                   label='hello!',
-                                   slider_enabled=False,
-                                   row=1,
-                                   sticky='w',
-                                   color='blue',
-                                   orient='vertical',
-                                   show_value=None,
-                                   verbose=True)
-    frame2 = CheckboxSliderSpinbox(frame_checkboxsliderspinbox,
-                                   checkbox_enabled=False,
-                                   slider_flipped=True,
-                                   label='span!',
-                                   row=0,
-                                   column=1,
-                                   rowspan=2,
-                                   color='red',
-                                   orient='vertical',
-                                   verbose=True)
-    frame_checkboxsliderspinbox.grid(row=0, column=2, padx=pad, pady=pad)
+    spinbox_frame = tk.LabelFrame(root, text='BOUNDING FRAME', bd=6)
+    spinbox_frame.grid(row=1, column=0, padx=pad, pady=pad, columnspan=2)
+    checkboxsliderspinbox0 = CheckboxSliderSpinbox(spinbox_frame, verbose=True)
+    checkboxsliderspinbox1 = CheckboxSliderSpinbox(
+        spinbox_frame,
+        label='hello!',
+        slider_enabled=False,
+        row=1,
+        sticky='w',
+        color='blue',
+        orient='vertical',
+        show_value=None,
+        verbose=True)
+    checkboxsliderspinbox2 = CheckboxSliderSpinbox(
+        spinbox_frame,
+        checkbox_enabled=False,
+        slider_flipped=True,
+        label='span!',
+        row=0,
+        column=1,
+        rowspan=2,
+        color='red',
+        orient='vertical',
+        verbose=True)
     
     # CanvasRectangleSliderTrace2D:
-    frame_canvasrectangleslidertrace2d = tk.LabelFrame(
-        root, text='CanvasRectangleSliderTrace2D bounding frame', bd=6)    
+    canvas_frame = tk.LabelFrame(root, text='BOUNDING FRAME', bd=6)
+    canvas_frame.grid(row=1, column=2, padx=pad, pady=pad, columnspan=2)
     height = CheckboxSliderSpinbox(
-        frame_canvasrectangleslidertrace2d,
+        canvas_frame,
         label='height',
         orient='vertical',
         checkbox_enabled=False,
+        slider_length=200,
         slider_flipped=True,
         default_value=25,
         row=1,
         verbose=True)
     width = CheckboxSliderSpinbox(
-        frame_canvasrectangleslidertrace2d,
+        canvas_frame,
         label='width',
         checkbox_enabled=False,
         default_value=50,
@@ -380,13 +448,12 @@ if __name__=='__main__':
         column=1,
         sticky='s',
         verbose=True)
-    CanvasRectangleSliderTrace2D(
-            frame_canvasrectangleslidertrace2d, width, height, row=1, column=1)
-    frame_canvasrectangleslidertrace2d.grid(row=0, column=3, padx=pad, pady=pad)
+    CanvasRectangleSliderTrace2D(canvas_frame, width, height, row=1, column=1)
 
     # Quit:
-    quit_button = tk.Button(root, text="Quit", command=root.quit)
-    quit_button.grid(row=3, column=2, padx=pad, pady=pad)
+    quit_button = tk.Button(
+        root, text="Quit", command=root.quit, height=5, width=30)
+    quit_button.grid(row=1, column=4, padx=pad, pady=pad)
     
     root.mainloop()
     root.destroy()
