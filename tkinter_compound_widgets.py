@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import font
 
 class Textbox(tk.LabelFrame):
     def __init__(self,
@@ -163,7 +164,7 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
                 row=r[1], column=c[1], padx=self.padx, pady=self.pady)
         self.spinbox.grid(row=r[2], column=c[2], padx=self.padx, pady=self.pady)
 
-    def init_checkbox(self):        
+    def init_checkbox(self):
         self.tk_checkbox_value = tk.BooleanVar()
         self.tk_checkbox_value.set(self.checkbox_default)
         self.checkbox = tk.Checkbutton(
@@ -306,7 +307,14 @@ class CanvasRectangleSliderTrace2D(tk.Canvas):
 if __name__=='__main__':
     root = tk.Tk()
     root.title('Root frame title')
-    pad = 20
+    pad = 10
+
+    # Adjust font size:
+##    print(font.nametofont('TkDefaultFont').actual())
+    size = 10 # default = 9
+    font.nametofont("TkDefaultFont").configure(size=size)
+    font.nametofont("TkTextFont").configure(size=size)
+    font.nametofont("TkFixedFont").configure(size=size)
     
     # Textbox:
     frame_textbox = tk.LabelFrame(
@@ -324,7 +332,7 @@ if __name__=='__main__':
     frame_radiobuttons = tk.LabelFrame(
         root, text='RadioButtons bounding frame', bd=6)
     frame_radiobuttons0 = RadioButtons(frame_radiobuttons, verbose=True)
-    frame_radiobuttons.grid(row=0, column=1, padx=pad, pady=pad)
+    frame_radiobuttons.grid(row=1, column=0, padx=pad, pady=pad)
     
     # CheckboxSliderSpinbox:
     frame_checkboxsliderspinbox = tk.LabelFrame(
