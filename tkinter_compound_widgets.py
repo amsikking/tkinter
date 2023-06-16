@@ -302,7 +302,7 @@ class CanvasRectangleSliderTrace2D(tk.Canvas):
             2 + (self.yslider.slider_length - rectangle_height) / 2,
             2 + (self.xslider.slider_length + rectangle_width) / 2,
             2 + (self.yslider.slider_length + rectangle_height) / 2,
-            fill='blue')
+            fill=self.fill)
         self.grid()
         return None
 
@@ -425,7 +425,7 @@ if __name__=='__main__':
         color='red',
         orient='vertical',
         verbose=True)
-    
+
     # CanvasRectangleSliderTrace2D:
     canvas_frame = tk.LabelFrame(root, text='BOUNDING FRAME', bd=6)
     canvas_frame.grid(row=1, column=2, padx=pad, pady=pad, columnspan=2)
