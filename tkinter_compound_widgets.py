@@ -276,33 +276,29 @@ class CanvasRectangleSliderTrace2D(tk.Canvas):
         self.yslider.tk_slider_value.trace('w', self.update_rectangle)
 
     def init_rectangle(self):
-        self.rectangle = self.create_rectangle(
-            2 + (self.xslider.slider_length -
-                 self.xslider.default_value * self.xratio) / 2,
-            2 + (self.yslider.slider_length -
-                 self.yslider.default_value * self.yratio) / 2,
-            2 + (self.xslider.slider_length +
-                 self.xslider.default_value * self.xratio) / 2,
-            2 + (self.yslider.slider_length +
-                 self.yslider.default_value * self.yratio) / 2,
-            fill=self.fill)
+        x1 = int(round(2 + (self.xslider.slider_length -
+                            self.xslider.default_value * self.xratio) / 2))
+        x2 = int(round(1 + (self.xslider.slider_length +
+                            self.xslider.default_value * self.xratio) / 2))
+        y1 = int(round(2 + (self.yslider.slider_length -
+                            self.yslider.default_value * self.yratio) / 2))
+        y2 = int(round(1 + (self.yslider.slider_length +
+                            self.yslider.default_value * self.yratio) / 2))
+        self.rectangle = self.create_rectangle(x1, y1, x2, y2, fill=self.fill)
         return None
 
     def update_rectangle(self, *args):
         if (self.xslider.tk_slider_value.get() == '' or
             self.yslider.tk_slider_value.get() == ''):
             return
-        rectangle_width =  int(
-            self.xslider.tk_slider_value.get() * self.xratio)        
-        rectangle_height = int(
-            self.yslider.tk_slider_value.get() * self.yratio)
+        x_width =  int(round(self.xslider.tk_slider_value.get() * self.xratio))
+        y_height = int(round(self.yslider.tk_slider_value.get() * self.yratio))
         self.delete(self.rectangle)
-        self.rectangle = self.create_rectangle(
-            2 + (self.xslider.slider_length - rectangle_width) / 2,
-            2 + (self.yslider.slider_length - rectangle_height) / 2,
-            2 + (self.xslider.slider_length + rectangle_width) / 2,
-            2 + (self.yslider.slider_length + rectangle_height) / 2,
-            fill=self.fill)
+        x1 = int(round(2 + (self.xslider.slider_length - x_width) / 2))
+        x2 = int(round(1 + (self.xslider.slider_length + x_width) / 2))
+        y1 = int(round(2 + (self.yslider.slider_length - y_height) / 2))
+        y2 = int(round(1 + (self.yslider.slider_length + y_height) / 2))
+        self.rectangle = self.create_rectangle(x1, y1, x2, y2, fill=self.fill)
         self.grid()
         return None
 
@@ -448,7 +444,8 @@ if __name__=='__main__':
         column=1,
         sticky='s',
         verbose=True)
-    CanvasRectangleSliderTrace2D(canvas_frame, width, height, row=1, column=1)
+    CanvasRectangleSliderTrace2D(
+        canvas_frame, width, height, row=1, column=1, fill='yellow')
 
     # Quit:
     quit_button = tk.Button(
