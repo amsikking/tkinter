@@ -84,17 +84,16 @@ class RadioButtons(tk.LabelFrame):
                   pady=self.pady)
         # widgets:
         self.init_radiobuttons()
-        self.position = self.tk_position.get()
 
     def init_radiobuttons(self):
-        self.tk_position = tk.IntVar()
-        self.tk_position.set(self.default_position)
+        self.position = tk.IntVar()
+        self.position.set(self.default_position)
         for button in self.buttons:
             self.radiobutton = tk.Radiobutton(
                 self,
                 text=button,
                 value=self.buttons.index(button),
-                variable=self.tk_position,
+                variable=self.position,
                 command=self.update_radiobuttons,
                 indicatoron=0,
                 height=self.height,
@@ -106,11 +105,11 @@ class RadioButtons(tk.LabelFrame):
         return None
 
     def update_radiobuttons(self):
-        self.position = self.tk_position.get()
+        position = self.position.get()
         if self.verbose:
-            print('%s: position=%s'%(self.label, self.position))
+            print('%s: position=%s'%(self.label, position))
         if self.function is not None:
-            self.function(self.position)
+            self.function(position)
         return None
 
 class CheckboxSliderSpinbox(tk.LabelFrame):
@@ -167,30 +166,29 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
         self.spinbox.grid(row=r[2], column=c[2], padx=self.padx, pady=self.pady)
 
     def init_checkbox(self):
-        self.tk_checkbox_value = tk.BooleanVar()
-        self.tk_checkbox_value.set(self.checkbox_default)
+        self.checkbox_value = tk.BooleanVar()
+        self.checkbox_value.set(self.checkbox_default)
         self.checkbox = tk.Checkbutton(
             self,
             text='On/Off',
-            variable=self.tk_checkbox_value,
+            variable=self.checkbox_value,
             command=self.update_checkbox)
-        self.checkbox_value = self.tk_checkbox_value.get()
         return None
 
     def update_checkbox(self):
-        self.checkbox_value = self.tk_checkbox_value.get()
+        checkbox_value = self.checkbox_value.get()
         if self.verbose:
-            print('%s: checkbox_value=%s'%(self.label, self.checkbox_value))
+            print('%s: checkbox_value=%s'%(self.label, checkbox_value))
         if self.checkbox_function is not None:
-            self.checkbox_function(self.checkbox_value)
+            self.checkbox_function(checkbox_value)
         return None
  
     def init_slider(self):        
-        self.tk_slider_value = tk.IntVar()
-        self.tk_slider_value.set(self.default_value)
+        self.slider_value = tk.IntVar()
+        self.slider_value.set(self.default_value)
         self.slider = tk.Scale(
             self,
-            variable=self.tk_slider_value,
+            variable=self.slider_value,
             from_=self.min_value,
             to=self.max_value,
             command=self.update_slider,
@@ -199,27 +197,25 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
             length=self.slider_length,
             orient=self.orient,
             showvalue=self.show_value)
-        self.slider_value = self.tk_slider_value.get()
         if self.slider_flipped:
             self.slider.config(from_=self.max_value, to=self.min_value)
         return None
 
     def update_slider(self, scale_value): # scale_value not used here (.Scale)
-        self.slider_value = self.tk_slider_value.get()
+        slider_value = self.slider_value.get()
         if self.verbose:
-            print('%s: slider_value=%s'%(self.label, self.slider_value))
+            print('%s: slider_value=%s'%(self.label, slider_value))
         if self.function is not None:
-            self.function(self.slider_value)
-        self.tk_spinbox_value.set(self.slider_value)
-        self.spinbox_value = self.slider_value
+            self.function(slider_value)
+        self.spinbox_value.set(slider_value)
         return None
 
     def init_spinbox(self):
-        self.tk_spinbox_value = tk.StringVar()
-        self.tk_spinbox_value.set(self.default_value)
+        self.spinbox_value = tk.IntVar()
+        self.spinbox_value.set(self.default_value)
         self.spinbox = tk.Spinbox(
             self,
-            textvariable=self.tk_spinbox_value,
+            textvariable=self.spinbox_value,
             from_=self.min_value,
             to=self.max_value,
             command=self.update_spinbox,
@@ -227,7 +223,7 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
             justify=tk.CENTER)
         self.spinbox.bind("<Return>", self.update_spinbox_and_validate)
         self.spinbox.bind("<FocusOut>", self.update_spinbox_and_validate)
-        self.spinbox_value = int(self.tk_spinbox_value.get())
+        self.current_spinbox_value = self.spinbox_value.get()
         return None
 
     def update_spinbox(self):
@@ -235,18 +231,18 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
         return None
 
     def update_spinbox_and_validate(self, event): # event not used here (.bind)
-        spinbox_value = self.tk_spinbox_value.get()
-        if (not spinbox_value.isdigit() or
-            int(spinbox_value) < self.min_value or
-            int(spinbox_value) > self.max_value):
-            self.tk_spinbox_value.set(self.spinbox_value)
-        self.spinbox_value = int(self.tk_spinbox_value.get())
+        new_spinbox_value = self.spinbox_value.get()
+        if (new_spinbox_value < self.min_value or
+            new_spinbox_value > self.max_value):
+            self.spinbox_value.set(self.current_spinbox_value)
+        self.current_spinbox_value = self.spinbox_value.get()
         if self.slider_enabled:
-            self.tk_slider_value.set(self.spinbox_value)
+            self.slider_value.set(self.current_spinbox_value)
         if self.verbose:
-            print('%s: spinbox_value=%s'%(self.label, self.spinbox_value))
+            print('%s: spinbox_value=%s'%(
+                self.label, self.current_spinbox_value))
         if self.function is not None:
-            self.function(self.spinbox_value)
+            self.function(self.current_spinbox_value)
         return None
 
 class CanvasRectangleSliderTrace2D(tk.Canvas):
@@ -272,8 +268,8 @@ class CanvasRectangleSliderTrace2D(tk.Canvas):
         self.yratio = yslider.slider_length / yslider.max_value
         self.grid(row=row, column=column, columnspan=columnspan)
         self.init_rectangle()
-        self.xslider.tk_slider_value.trace('w', self.update_rectangle)
-        self.yslider.tk_slider_value.trace('w', self.update_rectangle)
+        self.xslider.slider_value.trace('w', self.update_rectangle)
+        self.yslider.slider_value.trace('w', self.update_rectangle)
 
     def init_rectangle(self):
         x1 = int(round(2 + (self.xslider.slider_length -
@@ -288,11 +284,11 @@ class CanvasRectangleSliderTrace2D(tk.Canvas):
         return None
 
     def update_rectangle(self, *args):
-        if (self.xslider.tk_slider_value.get() == '' or
-            self.yslider.tk_slider_value.get() == ''):
+        if (self.xslider.slider_value.get() == '' or
+            self.yslider.slider_value.get() == ''):
             return
-        x_width =  int(round(self.xslider.tk_slider_value.get() * self.xratio))
-        y_height = int(round(self.yslider.tk_slider_value.get() * self.yratio))
+        x_width =  int(round(self.xslider.slider_value.get() * self.xratio))
+        y_height = int(round(self.yslider.slider_value.get() * self.yratio))
         self.delete(self.rectangle)
         x1 = int(round(2 + (self.xslider.slider_length - x_width) / 2))
         x2 = int(round(1 + (self.xslider.slider_length + x_width) / 2))
