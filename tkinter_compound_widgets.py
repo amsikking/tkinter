@@ -318,6 +318,14 @@ if __name__=='__main__':
     def print_hello():
         print('hello')
         return None
+    
+    hello_button = tk.Button(
+        buttons_frame,
+        text="Print 'hello!'",
+        command=print_hello,
+        width=button_width,
+        height=button_height)
+    hello_button.grid(row=0, column=0, padx=pad, pady=pad)
 
     def get_folder_path():
         folder_path = tk.filedialog.askdirectory(
@@ -326,6 +334,14 @@ if __name__=='__main__':
             title='Please choose a folder')
         print('folder_path = %s'%folder_path)
         return None
+    
+    get_folder_button = tk.Button(
+        buttons_frame,
+        text="Choose folder",
+        command=get_folder_path,
+        width=button_width,
+        height=button_height)
+    get_folder_button.grid(row=1, column=0, padx=pad, pady=pad)
 
     def get_file_path():
         file_path = tk.filedialog.askopenfilename(
@@ -335,29 +351,30 @@ if __name__=='__main__':
         print('file path = %s'%file_path)
         return None
     
-    hello_button = tk.Button(
-        buttons_frame,
-        text="Print 'hello!'",
-        command=print_hello,
-        width=button_width,
-        height=button_height)
-    hello_button.grid(row=0, column=0, padx=10, pady=10)
-
-    get_folder_button = tk.Button(
-        buttons_frame,
-        text="Choose folder",
-        command=get_folder_path,
-        width=button_width,
-        height=button_height)
-    get_folder_button.grid(row=1, column=0, padx=10, pady=10)
-
     get_file_button = tk.Button(
         buttons_frame,
         text="Choose file",
         command=get_file_path,
         width=button_width,
         height=button_height)
-    get_file_button.grid(row=2, column=0, padx=10, pady=10)
+    get_file_button.grid(row=2, column=0, padx=pad, pady=pad)
+
+    def launch_popup_window():
+        popup_window = tk.Toplevel()
+        popup_window.title('Popup title')
+        popup_window.grab_set() # force user to interact with window
+        quit_popup_button = tk.Button(popup_window, text="Quit",
+                                      command=popup_window.destroy,
+                                      height=5, width=30)
+        quit_popup_button.grid(row=0, column=0, padx=pad, pady=pad)
+
+    launch_popup_button = tk.Button(
+        buttons_frame,
+        text="Launch popup window",
+        command=launch_popup_window,
+        width=button_width,
+        height=button_height)
+    launch_popup_button.grid(row=3, column=0, padx=pad, pady=pad)
 
     # OptionMenu:
     menu_frame = tk.LabelFrame(root, text='BOUNDING FRAME', bd=6)
@@ -373,7 +390,7 @@ if __name__=='__main__':
     option_menu = tk.OptionMenu(
         menu_inner_frame, current_choice, *options, command=print_option)
     option_menu.config(width=20, height=2)
-    option_menu.grid(row=0, column=0, padx=10, pady=10)
+    option_menu.grid(row=0, column=0, padx=pad, pady=pad)
 
     # Textbox:
     text_frame = tk.LabelFrame(root, text='BOUNDING FRAME', bd=6)
