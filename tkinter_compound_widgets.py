@@ -208,10 +208,11 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
         if self.function is not None:
             self.function(slider_value)
         self.spinbox_value.set(slider_value)
+        self.valid_spinbox_value = slider_value
         return None
 
     def init_spinbox(self):
-        self.spinbox_value = tk.IntVar()
+        self.spinbox_value = tk.StringVar()
         self.spinbox_value.set(self.default_value)
         self.spinbox = tk.Spinbox(
             self,
@@ -223,7 +224,7 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
             justify=tk.CENTER)
         self.spinbox.bind("<Return>", self.update_spinbox_and_validate)
         self.spinbox.bind("<FocusOut>", self.update_spinbox_and_validate)
-        self.current_spinbox_value = self.spinbox_value.get()
+        self.valid_spinbox_value = int(self.spinbox_value.get())
         return None
 
     def update_spinbox(self):
@@ -232,17 +233,18 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
 
     def update_spinbox_and_validate(self, event): # event not used here (.bind)
         new_spinbox_value = self.spinbox_value.get()
-        if (new_spinbox_value < self.min_value or
-            new_spinbox_value > self.max_value):
-            self.spinbox_value.set(self.current_spinbox_value)
-        self.current_spinbox_value = self.spinbox_value.get()
+        if (not new_spinbox_value.isdigit() or
+            int(new_spinbox_value) < self.min_value or
+            int(new_spinbox_value) > self.max_value):
+            self.spinbox_value.set(self.valid_spinbox_value)
+        self.valid_spinbox_value = int(self.spinbox_value.get())
         if self.slider_enabled:
-            self.slider_value.set(self.current_spinbox_value)
+            self.slider_value.set(self.valid_spinbox_value)
         if self.verbose:
             print('%s: spinbox_value=%s'%(
-                self.label, self.current_spinbox_value))
+                self.label, self.valid_spinbox_value))
         if self.function is not None:
-            self.function(self.current_spinbox_value)
+            self.function(self.valid_spinbox_value)
         return None
 
 class CanvasRectangleSliderTrace2D(tk.Canvas):
