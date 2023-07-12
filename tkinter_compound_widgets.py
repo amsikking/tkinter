@@ -201,14 +201,8 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
             self.slider.config(from_=self.max_value, to=self.min_value)
         return None
 
-    def update_slider(self, scale_value): # scale_value not used here (.Scale)
-        slider_value = self.slider_value.get()
-        if self.verbose:
-            print('%s: slider_value=%s'%(self.label, slider_value))
-        if self.function is not None:
-            self.function(slider_value)
-        self.spinbox_value.set(slider_value)
-        self.valid_spinbox_value = slider_value
+    def update_slider(self, scale_value):
+        self.update_and_validate(int(scale_value))
         return None
 
     def init_spinbox(self):
@@ -219,32 +213,35 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
             textvariable=self.spinbox_value,
             from_=self.min_value,
             to=self.max_value,
-            command=self.update_spinbox,
+            command=lambda:self.update_and_validate(None),
             width=self.width,
             justify=tk.CENTER)
-        self.spinbox.bind("<Return>", self.update_spinbox_and_validate)
-        self.spinbox.bind("<FocusOut>", self.update_spinbox_and_validate)
-        self.valid_spinbox_value = int(self.spinbox_value.get())
+        self.spinbox.bind("<Return>", self.bind_update_and_validate)
+        self.spinbox.bind("<FocusOut>", self.bind_update_and_validate)
+        self.value = int(self.spinbox_value.get())
         return None
 
-    def update_spinbox(self):
-        self.update_spinbox_and_validate(None)
+    def bind_update_and_validate(self, event): # event not used (.bind)
+        self.update_and_validate(None)
         return None
 
-    def update_spinbox_and_validate(self, event): # event not used here (.bind)
-        new_spinbox_value = self.spinbox_value.get()
-        if (not new_spinbox_value.isdigit() or
-            int(new_spinbox_value) < self.min_value or
-            int(new_spinbox_value) > self.max_value):
-            self.spinbox_value.set(self.valid_spinbox_value)
-        self.valid_spinbox_value = int(self.spinbox_value.get())
+    def update_and_validate(self, value):
+        if value is None: # spinbox entry
+            value = self.spinbox_value.get()
+            if not value.isdigit():     # check non numeric entry
+                value = self.value      # reset to previous
+            else:
+                value = int(value)      # convert string
+        if not self.min_value <= value <= self.max_value: # check range
+            value = self.value          # reset to previous
+        self.spinbox_value.set(value)
         if self.slider_enabled:
-            self.slider_value.set(self.valid_spinbox_value)
-        if self.verbose:
-            print('%s: spinbox_value=%s'%(
-                self.label, self.valid_spinbox_value))
+            self.slider_value.set(value)
         if self.function is not None:
-            self.function(self.valid_spinbox_value)
+            self.function(value)
+        if self.verbose:
+            print('%s: value=%s'%(self.label, value))
+        self.value = value
         return None
 
 class CanvasRectangleSliderTrace2D(tk.Canvas):
