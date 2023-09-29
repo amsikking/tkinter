@@ -35,12 +35,12 @@ class Textbox(tk.LabelFrame):
         # widgets:
         self.init_textbox()
         self.text = self.textbox.get('1.0','end').strip('\n')
+        self.bind("<Leave>", lambda event: self.update_textbox(None))
 
     def init_textbox(self):
         self.textbox = tk.Text(self, width=self.width, height=self.height)
         self.textbox.insert('1.0', self.default_text)
         self.textbox.bind("<Return>", self.update_textbox)
-        self.textbox.bind("<FocusOut>", self.update_textbox)
         self.textbox.grid(padx=self.padx, pady=self.pady)
         return None
 
@@ -122,6 +122,7 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
                  checkbox_default=False,
                  checkbox_function=None,
                  slider_enabled=True,
+                 slider_fast_update=False,
                  slider_length=300,
                  tickinterval=4,
                  slider_flipped=False,
@@ -186,23 +187,26 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
     def init_slider(self):        
         self.slider_value = tk.IntVar()
         self.slider_value.set(self.default_value)
+        command = None
+        if self.slider_fast_update:
+            command = lambda event: self.update_and_validate(
+                self.slider_value.get())
         self.slider = tk.Scale(
             self,
             variable=self.slider_value,
             from_=self.min_value,
             to=self.max_value,
-            command=self.update_slider,
+            command=command,
             tickinterval=int(
                 (self.max_value - self.min_value) / self.tickinterval),
             length=self.slider_length,
             orient=self.orient,
             showvalue=self.show_value)
+        self.slider.bind(
+            '<ButtonRelease-1>',
+            lambda event: self.update_and_validate(self.slider_value.get()))
         if self.slider_flipped:
             self.slider.config(from_=self.max_value, to=self.min_value)
-        return None
-
-    def update_slider(self, scale_value):
-        self.update_and_validate(int(scale_value))
         return None
 
     def init_spinbox(self):
@@ -213,35 +217,36 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
             textvariable=self.spinbox_value,
             from_=self.min_value,
             to=self.max_value,
-            command=lambda:self.update_and_validate(None),
+            command=lambda: self.update_and_validate(None),
             width=self.width,
             justify=tk.CENTER)
-        self.spinbox.bind("<Return>", self.bind_update_and_validate)
-        self.spinbox.bind("<FocusOut>", self.bind_update_and_validate)
-        self.value = int(self.spinbox_value.get())
-        return None
-
-    def bind_update_and_validate(self, event): # event not used (.bind)
-        self.update_and_validate(None)
+        self.spinbox.bind(
+            "<Return>", lambda event: self.update_and_validate(None))
+        self.spinbox.bind(
+            "<Leave>", lambda event: self.update_and_validate(None))
+        self.value = tk.IntVar()
+        self.value.set(self.default_value)
         return None
 
     def update_and_validate(self, value):
+        # validate:
         if value is None: # spinbox entry
             value = self.spinbox_value.get()
             if not value.isdigit():     # check non numeric entry
-                value = self.value      # reset to previous
+                value = self.value.get()# reset to previous
             else:
                 value = int(value)      # convert string
         if not self.min_value <= value <= self.max_value: # check range
-            value = self.value          # reset to previous
+            value = self.value.get()    # reset to previous
+        # update:
+        self.value.set(value)
         self.spinbox_value.set(value)
         if self.slider_enabled:
             self.slider_value.set(value)
         if self.function is not None:
             self.function(value)
         if self.verbose:
-            print('%s: value=%s'%(self.label, value))
-        self.value = value
+            print('%s: self.value=%s'%(self.label, value))
         return None
 
 class CanvasRectangleSliderTrace2D(tk.Canvas):
