@@ -35,7 +35,8 @@ class Textbox(tk.LabelFrame):
         # widgets:
         self.init_textbox()
         self.text = self.textbox.get('1.0','end').strip('\n')
-        self.bind("<Leave>", lambda event: self.update_textbox(None))
+        self.bind("<Leave>", self.update_textbox)
+        self.bind("<FocusOut>", self.update_textbox)
 
     def init_textbox(self):
         self.textbox = tk.Text(self, width=self.width, height=self.height)
@@ -222,6 +223,8 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
             justify=tk.CENTER)
         self.spinbox.bind(
             "<Return>", lambda event: self.update_and_validate(None))
+        self.spinbox.bind(
+            "<FocusOut>", lambda event: self.update_and_validate(None))
         self.spinbox.bind(
             "<Leave>", lambda event: self.update_and_validate(None))
         self.value = tk.IntVar()
@@ -430,8 +433,9 @@ if __name__=='__main__':
     checkboxsliderspinbox2 = CheckboxSliderSpinbox(
         spinbox_frame,
         checkbox_enabled=False,
+        slider_fast_update=True,
         slider_flipped=True,
-        label='span!',
+        label='span! fast slider!',
         row=0,
         column=1,
         rowspan=2,
