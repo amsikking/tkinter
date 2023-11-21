@@ -33,17 +33,14 @@ class Textbox(tk.LabelFrame):
                   padx=self.padx,
                   pady=self.pady)
         # widgets:
-        self.init_textbox()
-        self.text = self.textbox.get('1.0','end').strip('\n')
-        self.bind("<Leave>", self.update_textbox)
-        self.bind("<FocusOut>", self.update_textbox)
-
-    def init_textbox(self):
         self.textbox = tk.Text(self, width=self.width, height=self.height)
         self.textbox.insert('1.0', self.default_text)
         self.textbox.bind("<Return>", self.update_textbox)
         self.textbox.grid(padx=self.padx, pady=self.pady)
-        return None
+        # attribute and bindings:
+        self.text = self.textbox.get('1.0','end').strip('\n')
+        self.bind("<Leave>", self.update_textbox)
+        self.bind("<FocusOut>", self.update_textbox)
 
     def update_textbox(self, event): # event is not used here (.bind)
         self.text = self.textbox.get('1.0','end').strip('\n')
@@ -84,9 +81,6 @@ class RadioButtons(tk.LabelFrame):
                   padx=self.padx,
                   pady=self.pady)
         # widgets:
-        self.init_radiobuttons()
-
-    def init_radiobuttons(self):
         self.position = tk.IntVar()
         self.position.set(self.default_position)
         for button in self.buttons:
@@ -100,10 +94,7 @@ class RadioButtons(tk.LabelFrame):
                 height=self.height,
                 width=self.width)
             self.radiobutton.grid(
-                row=self.buttons.index(button),
-                padx=self.padx,
-                pady=self.pady)
-        return None
+                row=self.buttons.index(button), padx=self.padx, pady=self.pady)
 
     def update_radiobuttons(self):
         position = self.position.get()
@@ -155,18 +146,18 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
                   sticky=self.sticky,
                   padx=self.padx,
                   pady=self.pady)
-        if checkbox_enabled: self.init_checkbox()
-        if slider_enabled: self.init_slider()
-        self.init_spinbox()
         # widgets:
         r, c = (0,0,0), (0,1,2)
         if self.orient == 'vertical': r, c = (0,1,2), (0,0,0)
         if checkbox_enabled:
+            self.init_checkbox()
             self.checkbox.grid(
                 row=r[0], column=c[0], padx=self.padx, pady=self.pady)
         if slider_enabled:
+            self.init_slider()
             self.slider.grid(
                 row=r[1], column=c[1], padx=self.padx, pady=self.pady)
+        self.init_spinbox()
         self.spinbox.grid(row=r[2], column=c[2], padx=self.padx, pady=self.pady)
 
     def init_checkbox(self):
@@ -188,10 +179,9 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
         return None
  
     def init_slider(self):
+        self.slider_value = tk.DoubleVar()
         if self.integers_only:
             self.slider_value = tk.IntVar()
-        else:
-            self.slider_value = tk.DoubleVar()
         self.slider_value.set(self.default_value)
         command = None
         if self.slider_fast_update:
@@ -234,10 +224,9 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
             "<FocusOut>", lambda event: self.update_and_validate(None))
         self.spinbox.bind(
             "<Leave>", lambda event: self.update_and_validate(None))
+        self.value = tk.DoubleVar()
         if self.integers_only:
             self.value = tk.IntVar()
-        else:
-            self.value = tk.DoubleVar()
         self.value.set(self.default_value)
         return None
 
@@ -279,28 +268,27 @@ class CanvasRectangleSliderTrace2D(tk.Canvas):
                            width=xslider.slider_length,
                            height=yslider.slider_length,
                            bg=color)
-        self.master = master
-        self.xslider = xslider
-        self.yslider = yslider
-        self.fill = fill
-        self.xratio = xslider.slider_length / xslider.max_value
-        self.yratio = yslider.slider_length / yslider.max_value
-        self.grid(row=row, column=column, columnspan=columnspan)
-        self.init_rectangle()
+        args = locals()
+        args.pop('self')
+        for k, v in args.items(): setattr(self, k, v)
+        # frame:
+        self.grid(row=self.row, column=self.column, columnspan=self.columnspan)
+        # calculate size:
+        self.xdefault = xslider.default_value
+        self.ydefault = yslider.default_value        
+        self.xlength  = xslider.slider_length
+        self.ylength  = yslider.slider_length
+        self.xratio   = self.xlength / xslider.max_value
+        self.yratio   = self.ylength / yslider.max_value
+        x1 = int(round(2 + (self.xlength - self.xdefault * self.xratio) / 2))
+        x2 = int(round(1 + (self.xlength + self.xdefault * self.xratio) / 2))
+        y1 = int(round(2 + (self.ylength - self.ydefault * self.yratio) / 2))
+        y2 = int(round(1 + (self.ylength + self.ydefault * self.yratio) / 2))
+        # widgets:
+        self.rectangle = self.create_rectangle(x1, y1, x2, y2, fill=self.fill)        
+        # bindings:
         self.xslider.slider_value.trace('w', self.update_rectangle)
         self.yslider.slider_value.trace('w', self.update_rectangle)
-
-    def init_rectangle(self):
-        x1 = int(round(2 + (self.xslider.slider_length -
-                            self.xslider.default_value * self.xratio) / 2))
-        x2 = int(round(1 + (self.xslider.slider_length +
-                            self.xslider.default_value * self.xratio) / 2))
-        y1 = int(round(2 + (self.yslider.slider_length -
-                            self.yslider.default_value * self.yratio) / 2))
-        y2 = int(round(1 + (self.yslider.slider_length +
-                            self.yslider.default_value * self.yratio) / 2))
-        self.rectangle = self.create_rectangle(x1, y1, x2, y2, fill=self.fill)
-        return None
 
     def update_rectangle(self, *args):
         if (self.xslider.slider_value.get() == '' or
@@ -309,10 +297,10 @@ class CanvasRectangleSliderTrace2D(tk.Canvas):
         x_width =  int(round(self.xslider.slider_value.get() * self.xratio))
         y_height = int(round(self.yslider.slider_value.get() * self.yratio))
         self.delete(self.rectangle)
-        x1 = int(round(2 + (self.xslider.slider_length - x_width) / 2))
-        x2 = int(round(1 + (self.xslider.slider_length + x_width) / 2))
-        y1 = int(round(2 + (self.yslider.slider_length - y_height) / 2))
-        y2 = int(round(1 + (self.yslider.slider_length + y_height) / 2))
+        x1 = int(round(2 + (self.xlength - x_width) / 2))
+        x2 = int(round(1 + (self.xlength + x_width) / 2))
+        y1 = int(round(2 + (self.ylength - y_height) / 2))
+        y2 = int(round(1 + (self.ylength + y_height) / 2))
         self.rectangle = self.create_rectangle(x1, y1, x2, y2, fill=self.fill)
         self.grid()
         return None
