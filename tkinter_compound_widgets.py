@@ -130,6 +130,8 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
                  min_value=0,
                  max_value=100,
                  default_value=0,
+                 increment=1,
+                 integers_only=True,
                  function=None,
                  row=0,
                  column=0,
@@ -185,8 +187,11 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
             self.checkbox_function(checkbox_value)
         return None
  
-    def init_slider(self):        
-        self.slider_value = tk.IntVar()
+    def init_slider(self):
+        if self.integers_only:
+            self.slider_value = tk.IntVar()
+        else:
+            self.slider_value = tk.DoubleVar()
         self.slider_value.set(self.default_value)
         command = None
         if self.slider_fast_update:
@@ -197,8 +202,9 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
             variable=self.slider_value,
             from_=self.min_value,
             to=self.max_value,
+            resolution=self.increment,
             command=command,
-            tickinterval=int(
+            tickinterval=float(
                 (self.max_value - self.min_value) / self.tickinterval),
             length=self.slider_length,
             orient=self.orient,
@@ -218,6 +224,7 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
             textvariable=self.spinbox_value,
             from_=self.min_value,
             to=self.max_value,
+            increment=self.increment,
             command=lambda: self.update_and_validate(None),
             width=self.width,
             justify=tk.CENTER)
@@ -227,7 +234,10 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
             "<FocusOut>", lambda event: self.update_and_validate(None))
         self.spinbox.bind(
             "<Leave>", lambda event: self.update_and_validate(None))
-        self.value = tk.IntVar()
+        if self.integers_only:
+            self.value = tk.IntVar()
+        else:
+            self.value = tk.DoubleVar()
         self.value.set(self.default_value)
         return None
 
@@ -235,10 +245,12 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
         # validate:
         if value is None: # spinbox entry
             value = self.spinbox_value.get()
-            if not value.isdigit():     # check non numeric entry
+            if not value.replace(".", "", 1).isdigit(): # non numeric entry
                 value = self.value.get()# reset to previous
-            else:
-                value = int(value)      # convert string
+            else: # convert string
+                value = float(value)
+                if self.integers_only:
+                    value = int(value)
         if not self.min_value <= value <= self.max_value: # check range
             value = self.value.get()    # reset to previous
         # update:
@@ -435,6 +447,10 @@ if __name__=='__main__':
         checkbox_enabled=False,
         slider_fast_update=True,
         slider_flipped=True,
+        min_value=0.1,
+        max_value=1,
+        increment=0.1,
+        integers_only=False,
         label='span! fast slider!',
         row=0,
         column=1,
