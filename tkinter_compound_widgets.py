@@ -234,14 +234,14 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
         # validate:
         if value is None: # spinbox entry
             value = self.spinbox_value.get()
-            if not value.replace(".", "", 1).isdigit(): # non numeric entry
-                value = self.value.get()# reset to previous
+            if not value.replace("-", "", 1).replace(".", "", 1).isdigit():
+                value = self.value.get()# non numeric -> reset to previous
             else: # convert string
                 value = float(value)
                 if self.integers_only:
                     value = int(value)
-        if not self.min_value <= value <= self.max_value: # check range
-            value = self.value.get()    # reset to previous
+        if not self.min_value <= value <= self.max_value:
+            value = self.value.get()    # out of range -> reset to previous
         # update:
         self.value.set(value)
         self.spinbox_value.set(value)
@@ -435,7 +435,7 @@ if __name__=='__main__':
         checkbox_enabled=False,
         slider_fast_update=True,
         slider_flipped=True,
-        min_value=0.1,
+        min_value=-0.2,
         max_value=1,
         increment=0.1,
         integers_only=False,
