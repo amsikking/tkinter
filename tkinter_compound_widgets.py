@@ -17,7 +17,7 @@ class Textbox(tk.LabelFrame):
                  rowspan=1,
                  columnspan=1,
                  padx=10,
-                 pady=10,
+                 pady=5,
                  sticky=None,
                  verbose=False):
         tk.LabelFrame.__init__(self, master, text=label, fg=color)
@@ -65,7 +65,7 @@ class RadioButtons(tk.LabelFrame):
                  rowspan=1,
                  columnspan=1,
                  padx=10,
-                 pady=10,
+                 pady=5,
                  sticky=None,
                  verbose=False):
         tk.LabelFrame.__init__(self, master, text=label, fg=color)
@@ -130,7 +130,7 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
                  columnspan=1,
                  width=10,
                  padx=10,
-                 pady=10,
+                 pady=5,
                  sticky=None,
                  show_value=0,
                  verbose=False):
