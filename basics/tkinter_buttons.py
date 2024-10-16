@@ -14,11 +14,11 @@ parent = click_button._nametowidget(parent_name) # return parent to python
 
 ##eventloop_name = click_button._winfo_mainloop()
 
-# make a quit button to exit the event loop
+# make a close button to exit the event loop
 # this lands in the root window but it would better to set 'master=parent'
 # use parent to destory root window
-quit_button = tk.Button(text="Quit", command=parent.destroy)
-quit_button.grid(row=2)
+close_button = tk.Button(text="Close", command=parent.destroy)
+close_button.grid(row=2)
 
 # note that the program finishes but the button persists
 print('finished')
