@@ -2,7 +2,6 @@
 Some simple (re-usable) modules for quickly creating a hardware GUI.
 ## Quick start:
 - Run 'tkinter_compound_widgets.py' to see (and interact with) a grab bag of compound widgets that can be used to make a simple yet effective graphical user interface (GUI).
-- Run 'microscope_gui_example.py' to see (and interact with) a simulated microscope that is closely based on a functioning microscope.
 
 ![social_preview](https://github.com/amsikking/tkinter/blob/main/social_preview.png)
 
