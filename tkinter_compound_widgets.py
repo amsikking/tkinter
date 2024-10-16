@@ -370,10 +370,19 @@ if __name__=='__main__':
         popup_window = tk.Toplevel()
         popup_window.title('Popup title')
         popup_window.grab_set() # force user to interact with window
-        quit_popup_button = tk.Button(popup_window, text="Quit",
-                                      command=popup_window.destroy,
-                                      height=5, width=30)
-        quit_popup_button.grid(row=0, column=0, padx=pad, pady=pad)
+        
+        # add close function + any commands for when the user hits the 'X'
+        def close_popup():
+            print('Closing popup')
+            popup_window.destroy()
+        popup_window.protocol("WM_DELETE_WINDOW", close_popup)
+        
+        def popup_function():
+            print('popup_function')
+        popup_button = tk.Button(popup_window, text="popup_function",
+                                 command=popup_function,
+                                 height=5, width=30)
+        popup_button.grid(row=0, column=0, padx=pad, pady=pad)
 
     launch_popup_button = tk.Button(
         buttons_frame,
@@ -472,10 +481,10 @@ if __name__=='__main__':
     CanvasRectangleSliderTrace2D(
         canvas_frame, width, height, row=1, column=1, fill='yellow')
 
-    # Quit:
-    quit_button = tk.Button(
-        root, text="Quit", command=root.quit, height=5, width=30)
-    quit_button.grid(row=1, column=4, padx=pad, pady=pad)
+    # add close function + any commands for when the user hits the 'X'
+    def close():
+        print('Closing')
+        root.destroy()
+    root.protocol("WM_DELETE_WINDOW", close)
     
     root.mainloop()
-    root.destroy()
