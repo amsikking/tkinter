@@ -12,12 +12,14 @@ class Gui(tk.Frame):
     
         self.buttons()
 
-        self.quit_root_button = tk.Button(
-            self.root, text="Quit_root", command=self.root.quit) # quit root
-        self.quit_root_button.grid()
+        # add close function + any commands for when the user hits the 'X'
+        def close():
+            print('Closing')
+            # close root window:
+            self.root.destroy()
+        self.root.protocol("WM_DELETE_WINDOW", close)
         
         self.root.mainloop()
-        self.root.destroy()
         
     def buttons(self): # let the frame be the master, it could also be the root
         self.print_button = tk.Button(
