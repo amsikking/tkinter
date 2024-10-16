@@ -40,8 +40,11 @@ root.title('Canvas_rectangle')
 frame1 = TestFrame(root, 0, 500, 200, 200, 100)
 frame2 = TestFrame(root, 1, 100, 300, 70, 150)
 
-quit_button = tk.Button(text="Quit", command=root.quit)
-quit_button.grid(row=2)
+# add close function + any commands for when the user hits the 'X'
+def close():
+    print('Closing')
+    # close root window:
+    root.destroy()
+root.protocol("WM_DELETE_WINDOW", close)
 
 root.mainloop()
-root.destroy()
