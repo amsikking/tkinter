@@ -16,12 +16,12 @@ def hello():
 button = tk.Button(master=root, text="Click me!", command=hello)
 button.grid(row=1)
 
-# make a quit button to exit the event loop and also assign to the root window:
-quit_button = tk.Button(root, text="Quit", command=root.quit)
-quit_button.grid(row=2)
+# add close function + any commands for when the user hits the 'X'
+def close():
+    print('Closing')
+    # close root window:
+    root.destroy()
+root.protocol("WM_DELETE_WINDOW", close)
 
 # run root window event loop:
 root.mainloop()
-
-# close root window:
-root.destroy()
