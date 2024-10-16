@@ -16,10 +16,6 @@ class TestFrame(tk.Frame):
         self.button = tk.Button(
             self.master, text="Click me", command=self.hello)
         self.button.grid(row=1)
-
-        self.quit_button = tk.Button(
-            self.master, text="Quit", command=self.quit)
-        self.quit_button.grid(row=2)
         
     def hello(self):
         print("Hello World!")
@@ -31,9 +27,12 @@ root.title("This is the root window")
 # Create frame object and set master to root window
 frame = TestFrame(root)
 
+# add close function + any commands for when the user hits the 'X'
+def close():
+    print('Closing')
+    # close root window:
+    root.destroy()
+root.protocol("WM_DELETE_WINDOW", close)
+
 # run frame event loop (waits for mouse and keyboard events)
 root.mainloop()
-
-frame.destroy() # close frame
-
-root.destroy() # close root window
