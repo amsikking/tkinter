@@ -32,8 +32,11 @@ root.title('Spinbox_GUI')
 frame1 = TestFrame(root, row=1)
 frame2 = TestFrame(root, row=2)
 
-quit_button = tk.Button(root, text="Quit", command=root.quit)
-quit_button.grid(row=3)
+# add close function + any commands for when the user hits the 'X'
+def close():
+    print('Closing')
+    # close root window:
+    root.destroy()
+root.protocol("WM_DELETE_WINDOW", close)
 
 root.mainloop()
-root.destroy()
