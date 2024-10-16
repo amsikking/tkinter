@@ -51,8 +51,11 @@ root.title('Canvas_rectangle_slider')
 
 frame = TestFrame(root, 300, 50)
 
-quit_button = tk.Button(root, text="Quit", command=root.quit)
-quit_button.grid(row=2)
+# add close function + any commands for when the user hits the 'X'
+def close():
+    print('Closing')
+    # close root window:
+    root.destroy()
+root.protocol("WM_DELETE_WINDOW", close)
 
 root.mainloop()
-root.destroy()
