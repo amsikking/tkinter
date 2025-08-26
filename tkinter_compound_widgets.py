@@ -32,17 +32,24 @@ class Textbox(tk.LabelFrame):
                   sticky=self.sticky,
                   padx=self.padx,
                   pady=self.pady)
-        # widgets:
+        # widget and attribute:
         self.textbox = tk.Text(self, width=self.width, height=self.height)
-        self.textbox.insert('1.0', self.default_text)
-        self.textbox.bind("<Return>", self.update_textbox)
         self.textbox.grid(padx=self.padx, pady=self.pady)
-        # attribute and bindings:
+        self.textbox.insert('1.0', self.default_text)
         self.text = self.textbox.get('1.0','end').strip('\n')
-        self.bind("<Leave>", self.update_textbox)
-        self.bind("<FocusOut>", self.update_textbox)
+        # bindings:
+        self.focus_in = tk.BooleanVar()
+        def _focus_in(event):
+            self.focus_in.set(1)
+        self.textbox.bind("<FocusIn>", _focus_in)   # user clicks in textbox
+        def _leave(event):
+            if self.focus_in.get():
+                self.update_textbox()
+                self.focus_set()
+            self.focus_in.set(0)
+        self.textbox.bind("<Leave>", _leave)        # mouse leaves textbox
 
-    def update_textbox(self, event): # event is not used here (.bind)
+    def update_textbox(self):
         self.text = self.textbox.get('1.0','end').strip('\n')
         if self.verbose:
             print('%s: text=%s'%(self.label, self.text))
@@ -177,7 +184,7 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
         if self.checkbox_function is not None:
             self.checkbox_function(checkbox_value)
         return None
- 
+
     def init_slider(self):
         self.slider_value = tk.DoubleVar()
         if self.integers_only:
