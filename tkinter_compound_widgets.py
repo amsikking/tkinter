@@ -20,11 +20,13 @@ class Textbox(tk.LabelFrame):
                  pady=5,
                  sticky=None,
                  verbose=False):
-        tk.LabelFrame.__init__(self, master, text=label, fg=color)
+        # attributes:
         args = locals()
         args.pop('self')
         for k, v in args.items(): setattr(self, k, v)
         # frame:
+        tk.LabelFrame.__init__(
+            self, self.master, text=self.label, fg=self.color)
         self.grid(row=self.row,
                   column=self.column,
                   rowspan=self.rowspan,
@@ -75,11 +77,13 @@ class RadioButtons(tk.LabelFrame):
                  pady=5,
                  sticky=None,
                  verbose=False):
-        tk.LabelFrame.__init__(self, master, text=label, fg=color)
+        # attributes:
         args = locals()
         args.pop('self')
         for k, v in args.items(): setattr(self, k, v)
         # frame:
+        tk.LabelFrame.__init__(
+            self, self.master, text=self.label, fg=self.color)
         self.grid(row=self.row,
                   column=self.column,
                   rowspan=self.rowspan,
@@ -87,7 +91,7 @@ class RadioButtons(tk.LabelFrame):
                   sticky=self.sticky,
                   padx=self.padx,
                   pady=self.pady)
-        # widgets:
+        # widgets and attribute:
         self.position = tk.IntVar()
         self.position.set(self.default_position)
         for button in self.buttons:
@@ -141,11 +145,13 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
                  sticky=None,
                  show_value=0,
                  verbose=False):
-        tk.LabelFrame.__init__(self, master, text=label, fg=color)
+        # attributes:
         args = locals()
         args.pop('self')
         for k, v in args.items(): setattr(self, k, v)
         # frame:
+        tk.LabelFrame.__init__(
+            self, self.master, text=self.label, fg=self.color)
         self.grid(row=self.row,
                   column=self.column,
                   rowspan=self.rowspan,
@@ -206,11 +212,11 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
             length=self.slider_length,
             orient=self.orient,
             showvalue=self.show_value)
+        if self.slider_flipped:
+            self.slider.config(from_=self.max_value, to=self.min_value)        
         self.slider.bind(
             '<ButtonRelease-1>',
             lambda event: self.update_and_validate(self.slider_value.get()))
-        if self.slider_flipped:
-            self.slider.config(from_=self.max_value, to=self.min_value)
         return None
 
     def init_spinbox(self):
@@ -225,16 +231,16 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
             command=lambda: self.update_and_validate(None),
             width=self.width,
             justify=tk.CENTER)
+        self.value = tk.DoubleVar()
+        if self.integers_only:
+            self.value = tk.IntVar()
+        self.value.set(self.default_value)
         self.spinbox.bind(
             "<Return>", lambda event: self.update_and_validate(None))
         self.spinbox.bind(
             "<FocusOut>", lambda event: self.update_and_validate(None))
         self.spinbox.bind(
             "<Leave>", lambda event: self.update_and_validate(None))
-        self.value = tk.DoubleVar()
-        if self.integers_only:
-            self.value = tk.IntVar()
-        self.value.set(self.default_value)
         return None
 
     def update_and_validate(self, value):
@@ -270,15 +276,16 @@ class CanvasRectangleSliderTrace2D(tk.Canvas):
                  columnspan=1,
                  color='gray',
                  fill='blue'):
-        tk.Canvas.__init__(self,
-                           master,
-                           width=xslider.slider_length,
-                           height=yslider.slider_length,
-                           bg=color)
+        # attributes:
         args = locals()
         args.pop('self')
         for k, v in args.items(): setattr(self, k, v)
         # frame:
+        tk.Canvas.__init__(self,
+                           self.master,
+                           width=self.xslider.slider_length,
+                           height=self.yslider.slider_length,
+                           bg=self.color)
         self.grid(row=self.row, column=self.column, columnspan=self.columnspan)
         # calculate size:
         self.xdefault = xslider.default_value
