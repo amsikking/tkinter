@@ -41,15 +41,14 @@ class Textbox(tk.LabelFrame):
         self.text = self.textbox.get('1.0','end').strip('\n')
         # bindings:
         self.focus_in = tk.BooleanVar()
-        def _focus_in(event):
-            self.focus_in.set(1)
-        self.textbox.bind("<FocusIn>", _focus_in)   # user clicks in textbox
+        self.textbox.bind(                      # user clicks in textbox
+            "<FocusIn>", lambda event: self.focus_in.set(1))
         def _leave(event):
             if self.focus_in.get():
                 self.update_textbox()
                 self.focus_set()
             self.focus_in.set(0)
-        self.textbox.bind("<Leave>", _leave)        # mouse leaves textbox
+        self.textbox.bind("<Leave>", _leave)    # mouse leaves textbox
 
     def update_textbox(self):
         self.text = self.textbox.get('1.0','end').strip('\n')
@@ -213,7 +212,8 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
             orient=self.orient,
             showvalue=self.show_value)
         if self.slider_flipped:
-            self.slider.config(from_=self.max_value, to=self.min_value)        
+            self.slider.config(from_=self.max_value, to=self.min_value)
+        # bindings:
         self.slider.bind(
             '<ButtonRelease-1>',
             lambda event: self.update_and_validate(self.slider_value.get()))
@@ -235,12 +235,16 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
         if self.integers_only:
             self.value = tk.IntVar()
         self.value.set(self.default_value)
-        self.spinbox.bind(
-            "<Return>", lambda event: self.update_and_validate(None))
-        self.spinbox.bind(
-            "<FocusOut>", lambda event: self.update_and_validate(None))
-        self.spinbox.bind(
-            "<Leave>", lambda event: self.update_and_validate(None))
+        # bindings:
+        self.focus_in = tk.BooleanVar()
+        self.spinbox.bind(                      # user clicks in spinbox
+            "<FocusIn>", lambda event: self.focus_in.set(1))   
+        def _leave(event):
+            if self.focus_in.get():
+                self.update_and_validate(None)
+                self.focus_set()
+            self.focus_in.set(0)
+        self.spinbox.bind("<Leave>", _leave)    # mouse leaves spinbox
         return None
 
     def update_and_validate(self, value):
