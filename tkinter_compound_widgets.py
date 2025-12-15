@@ -245,6 +245,7 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
                 self.focus_set()
             self.focus_in.set(0)
         self.spinbox.bind("<Leave>", _leave)    # mouse leaves spinbox
+        self.spinbox.bind("<Return>", _leave)   # user hits return
         return None
 
     def update_and_validate(self, value):
