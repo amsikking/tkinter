@@ -1,7 +1,8 @@
+# Imports from the python standard library:
 import os
 import tkinter as tk
-from tkinter import font
 from tkinter import filedialog
+from tkinter import font
 
 class Textbox(tk.LabelFrame):
     def __init__(self,
@@ -48,7 +49,7 @@ class Textbox(tk.LabelFrame):
                 self.update_textbox()
                 self.focus_set()
             self.focus_in.set(0)
-        self.textbox.bind("<Leave>", _leave)    # mouse leaves textbox
+        self.bind("<Leave>", _leave)            # mouse leaves frame
 
     def update_textbox(self):
         self.text = self.textbox.get('1.0','end').strip('\n')
@@ -244,7 +245,7 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
                 self.update_and_validate(None)
                 self.focus_set()
             self.focus_in.set(0)
-        self.spinbox.bind("<Leave>", _leave)    # mouse leaves spinbox
+        self.bind("<Leave>", _leave)            # mouse leaves frame
         self.spinbox.bind("<Return>", _leave)   # user hits return
         return None
 
