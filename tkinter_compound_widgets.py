@@ -44,7 +44,7 @@ class Textbox(tk.LabelFrame):
         self.text = self.textbox.get('1.0','end').strip('\n')
         # bindings:
         if self.hovertip !='hovertip': # target textbox, aviod <Leave> on frame
-            Hovertip(self.textbox, self.hovertip)
+            self.tip = Hovertip(self.textbox, self.hovertip)
         self.focus_in = tk.BooleanVar()
         self.textbox.bind(                      # user clicks in textbox
             "<FocusIn>", lambda event: self.focus_in.set(1))
@@ -113,7 +113,7 @@ class RadioButtons(tk.LabelFrame):
                 row=self.buttons.index(button), padx=self.padx, pady=self.pady)
         # bindings:
         if self.hovertip !='hovertip':
-            Hovertip(self, self.hovertip)
+            self.tip = Hovertip(self, self.hovertip)
 
     def update_radiobuttons(self):
         position = self.position.get()
@@ -247,7 +247,7 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
         self.value.set(self.default_value)
         # bindings:
         if self.hovertip !='hovertip': # target spinbox, aviod <Leave> on frame
-            Hovertip(self.spinbox, self.hovertip)
+            self.tip = Hovertip(self.spinbox, self.hovertip)
         self.focus_in = tk.BooleanVar()
         self.spinbox.bind(                      # user clicks in spinbox
             "<FocusIn>", lambda event: self.focus_in.set(1))   
