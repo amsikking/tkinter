@@ -1,6 +1,7 @@
 # Imports from the python standard library:
 import os
 import tkinter as tk
+from idlelib.tooltip import Hovertip
 from tkinter import filedialog
 from tkinter import font
 
@@ -8,6 +9,7 @@ class Textbox(tk.LabelFrame):
     def __init__(self,
                  master,
                  label='Textbox frame',
+                 hovertip='hovertip',
                  color='black',
                  default_text='entry text',
                  function=None,
@@ -41,6 +43,8 @@ class Textbox(tk.LabelFrame):
         self.textbox.insert('1.0', self.default_text)
         self.text = self.textbox.get('1.0','end').strip('\n')
         # bindings:
+        if self.hovertip !='hovertip': # target textbox, aviod <Leave> on frame
+            Hovertip(self.textbox, self.hovertip)
         self.focus_in = tk.BooleanVar()
         self.textbox.bind(                      # user clicks in textbox
             "<FocusIn>", lambda event: self.focus_in.set(1))
@@ -63,6 +67,7 @@ class RadioButtons(tk.LabelFrame):
     def __init__(self,
                  master,
                  label='RadioButtons frame',
+                 hovertip='hovertip',
                  color='black',
                  buttons=('button 0','button 1'),
                  default_position=0,
@@ -106,6 +111,9 @@ class RadioButtons(tk.LabelFrame):
                 width=self.width)
             self.radiobutton.grid(
                 row=self.buttons.index(button), padx=self.padx, pady=self.pady)
+        # bindings:
+        if self.hovertip !='hovertip':
+            Hovertip(self, self.hovertip)
 
     def update_radiobuttons(self):
         position = self.position.get()
@@ -119,6 +127,7 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
     def __init__(self,
                  master,
                  label='CheckboxSliderSpinbox frame',
+                 hovertip='hovertip',
                  color='black',
                  orient='horizontal',
                  checkbox_enabled=True,
@@ -237,6 +246,8 @@ class CheckboxSliderSpinbox(tk.LabelFrame):
             self.value = tk.IntVar()
         self.value.set(self.default_value)
         # bindings:
+        if self.hovertip !='hovertip': # target spinbox, aviod <Leave> on frame
+            Hovertip(self.spinbox, self.hovertip)
         self.focus_in = tk.BooleanVar()
         self.spinbox.bind(                      # user clicks in spinbox
             "<FocusIn>", lambda event: self.focus_in.set(1))   
@@ -342,6 +353,9 @@ if __name__=='__main__':
     buttons_frame.grid(row=0, column=0, padx=pad, pady=pad)
     button_width, button_height = 20, 2
 
+    # Hovertips:
+    buttons_frame_tip = Hovertip(buttons_frame, "Some tips on buttons!")
+
     def print_hello():
         print('hello')
         return None
@@ -353,6 +367,9 @@ if __name__=='__main__':
         width=button_width,
         height=button_height)
     hello_button.grid(row=0, column=0, padx=pad, pady=pad)
+    
+    # Hovertips on buttons:
+    buttons_frame_tip = Hovertip(hello_button, "hello tip!")
 
     def get_folder_path():
         folder_path = tk.filedialog.askdirectory(
@@ -435,6 +452,7 @@ if __name__=='__main__':
     textbox1 = Textbox(
         text_frame,
         label='hello!',
+        hovertip='tip!',
         row=1,
         color='blue',
         default_text='testing',
@@ -443,7 +461,7 @@ if __name__=='__main__':
     # Radiobuttons:
     radio_frame = tk.LabelFrame(root, text='BOUNDING FRAME', bd=6)
     radio_frame.grid(row=0, column=3, padx=pad, pady=pad)
-    radiobuttons = RadioButtons(radio_frame, verbose=True)
+    radiobuttons = RadioButtons(radio_frame, hovertip='tip!', verbose=True)
     
     # CheckboxSliderSpinbox:
     spinbox_frame = tk.LabelFrame(root, text='BOUNDING FRAME', bd=6)
@@ -469,6 +487,7 @@ if __name__=='__main__':
         increment=0.1,
         integers_only=False,
         label='span! fast slider!',
+        hovertip='tip!',
         row=0,
         column=1,
         rowspan=2,
